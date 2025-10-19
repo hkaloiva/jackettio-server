@@ -1,0 +1,53 @@
+version: "3.3"
+name: jackettio
+services:
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+    networks:
+      - jackettio
+    restart: unless-stopped
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS= #optional
+    depends_on:
+      - flaresolverr
+    networks:
+      - jackettio
+    restart: unless-stopped
+    volumes:
+      - jackett-config:/config
+      - jackett-downloads:/downloads
+
+  jackettio:
+    image: arvida42/jackettio:latest
+    container_name: jackettio
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - DATA_FOLDER=/data
+    depends_on:
+      - jackett
+    networks:
+      - jackettio
+    restart: unless-stopped
+    volumes:
+      - jackettio-data:/data
+    
+networks:
+  jackettio:
+
+volumes:
+  jackett-config:
+  jackett-downloads:
+  jackettio-data:
