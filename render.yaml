@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: jackettio
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    plan: free
+    region: oregon
+    environmentVariables:
+      - key: JACKETT_URL
+        value: http://localhost:9117
+      - key: JACKETT_API_KEY
+        value: wj6y25qxlszh9wlzmbci1m3k4ha71wfp
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /

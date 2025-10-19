@@ -1,0 +1,22 @@
+FROM ubuntu:22.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    docker-compose \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy files
+COPY . /app
+WORKDIR /app
+
+# Make scripts executable
+RUN chmod +x cli.sh
+
+# Expose port
+EXPOSE 10000
+
+# Start services
+CMD ["./cli.sh", "install"]
